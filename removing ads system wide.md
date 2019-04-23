@@ -7,3 +7,4 @@ su
 settings put global LOCKSCREEN_AD_ENABLED 0
 
 settings put global ksoHash 0
+# delete special offers
