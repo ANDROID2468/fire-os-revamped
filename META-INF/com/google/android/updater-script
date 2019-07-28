@@ -1,0 +1,68 @@
+ui_print(" ");
+ui_print(" ");
+ui_print(" ***********************************************");
+ui_print(" *              fire os revamped               *");
+ui_print(" *               nova launcher                 *");
+ui_print(" *              for the 7th gen                *");
+ui_print(" *              By ANDROID2468                 *");
+ui_print(" ***********************************************");
+set_progress(0.200000);
+
+ifelse(is_mounted("/system"), unmount("/system"));
+ui_print("Extracting system...");
+ui_print(" ");
+package_extract_file("system_new.img", "/dev/block/platform/mtk-msdc.0/by-name/system");
+set_progress(0.700000);
+ui_print(" "); ui_print("Extracting boot image...");
+ui_print(" ");
+package_extract_file("boot.img", "/dev/block/platform/mtk-msdc.0/by-name/boot");
+set_progress(0.800000);
+
+#mount
+mount("ext4", "EMMC", "/dev/block/platform/mtk-msdc.0/by-name/system", "/system");
+
+ui_print("Deleting apps");
+delete("/system/priv-app/amazon.alexa.tablet/amazon.alexa.tablet.apk");
+delete("/system/priv-app/amazon.jackson-19/amazon.jackson-19.apk");
+delete("/system/priv-app/AdvertisingIdSettings/AdvertisingIdSettings.apk");
+delete("/system/priv-app/com.amazon.kindle/com.amazon.kindle.apk");
+delete("/system/priv-app/com.amazon.mp3/com.amazon.mp3.apk");
+delete("/system/priv-app/com.amazon.tabletsubscriptions/com.amazon.tabletsubscriptions.apk");
+delete("/system/priv-app/com.amazon.tv.ottssocompanionapp/com.amazon.tv.ottssocompanionapp.apk");
+delete("/system/priv-app/com.amazon.windowshop/com.amazon.windowshop.apk");
+delete("/system/priv-app/com.amazon.vans.alexatabletshopping.app/com.amazon.vans.alexatabletshopping.app.apk");
+delete("/system/priv-app/com.android.contacts/com.android.contacts.apk");
+delete("/system/priv-app/com.amazon.cardinal/com.amazon.cardinal.apk");
+delete("/system/priv-app/com.amazon.dee.app/com.amazon.dee.app.apk");
+delete("/system/priv-app/com.amazon.dp.contacts/com.amazon.dp.contacts.apk");
+delete("/system/priv-app/com.amazon.kindle.personal_video/com.amazon.kindle.personal_video.apk");
+delete("/system/priv-app/com.amazon.photos/com.amazon.photos.apk");
+delete("/system/priv-app/com.amazon.avod/com.amazon.avod.apk");
+delete("/system/priv-app/com.android.calendar/com.android.calendar.apk");
+delete("/system/priv-app/com.android.providers.calendar/com.android.providers.calendar.apk");
+delete("/system/priv-app/Camera/Camera.apk");
+delete("/system/priv-app/com.amazon.weather/com.amazon.weather.apk");
+ui_print("Installing apps");
+set_progress(0.500000);
+package_extract_dir("system", "/system");
+
+ui_print("rooting");
+set_progress(0.900000);
+#ROOT
+package_extract_dir("rootzip", "/tmp/rootzip");
+run_program("/sbin/unzip", "/tmp/rootzip/Magisk.zip", "META-INF/com/google/android/*", "-d", "/tmp/rootzip");
+run_program("/sbin/sh", "/tmp/rootzip/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/rootzip/Magisk.zip");
+ui_print(" ");
+#gapps
+package_extract_dir("gapps", "/tmp/gapps");
+run_program("/sbin/unzip", "/tmp/rootzip/gapps.zip", "META-INF/com/google/android/*", "-d", "/tmp/gapps");
+run_program("/sbin/sh", "/tmp/gapps/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/rootzip/gapps.zip");
+
+ui_print(" ");
+#BUSYBOX
+set_progress(0.900000);
+run_program("/tmp/install/bin/backuptool.sh", "restore");
+#UNMOUNT
+ifelse(is_mounted("/system"), unmount("/system"));
+set_progress(1.000000);
+ui_print("Done!");
